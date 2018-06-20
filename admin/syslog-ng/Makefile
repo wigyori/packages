@@ -24,7 +24,7 @@ include $(INCLUDE_DIR)/nls.mk
 define Package/syslog-ng
   SECTION:=admin
   CATEGORY:=Administration
-  DEPENDS:=+libpcre +glib2 +libeventlog +libopenssl +libuuid +libcurl
+  DEPENDS:=+libpcre +glib2 +libeventlog +libopenssl +libuuid +libcurl +librt
   TITLE:=A powerful syslog daemon
   URL:=http://www.balabit.com/network-security/syslog-ng/opensource-logging-system/
 endef
@@ -68,12 +68,15 @@ CONFIGURE_VARS += \
 	LIBDBI_CFLAGS="-I$(STAGING_DIR)/usr/include"
 
 define Package/syslog-ng/install
-	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/syslog-ng $(1)/usr/sbin/
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(MAKE) -C $(PKG_BUILD_DIR) \
+		install-sbinPROGRAMS install-libLTLIBRARIES \
+		install-moduleLTLIBRARIES DESTDIR="$(1)"
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/syslog-ng.init $(1)/etc/init.d/syslog-ng
-	$(INSTALL_DIR) $(1)/etc
 	$(INSTALL_DATA) ./files/syslog-ng.conf $(1)/etc
+	$(INSTALL_DIR) $(1)/etc/syslog-ng.d/
+	$(call libtool_remove_files,$(1))
 endef
 
 $(eval $(call BuildPackage,syslog-ng))
