@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=syslog-ng
-PKG_VERSION:=3.0.5
-PKG_RELEASE:=5
+PKG_VERSION:=3.5.6
+PKG_RELEASE:=1
 
-PKG_SOURCE_URL:=http://www.balabit.com/downloads/files/syslog-ng/open-source-edition/$(PKG_VERSION)/source/
+PKG_SOURCE_URL:=https://my.balabit.com/downloads/syslog-ng/open-source-edition/$(PKG_VERSION)/source/
 PKG_SOURCE:=$(PKG_NAME)_$(PKG_VERSION).tar.gz
-PKG_MD5SUM:=28f0d9ff2243b330e8cd6311ef9b2f12
+PKG_MD5SUM:=eee31ddb012b1fcf2b6a6a99f073a9a6
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_IPV6 \
@@ -24,7 +24,7 @@ include $(INCLUDE_DIR)/nls.mk
 define Package/syslog-ng
   SECTION:=admin
   CATEGORY:=Administration
-  DEPENDS:=+libpcre +glib2 +libeventlog +libopenssl +libwrap +libpthread +librt +zlib +libdbi
+  DEPENDS:=+libpcre +glib2 +libeventlog +libopenssl +libuuid +libcurl
   TITLE:=A powerful syslog daemon
   URL:=http://www.balabit.com/network-security/syslog-ng/opensource-logging-system/
 endef
@@ -46,13 +46,20 @@ endef
 
 CONFIGURE_ARGS +=  \
 	$(call autoconf_bool,CONFIG_IPV6,ipv6) \
-	--disable-dependency-tracking \
-	--enable-tcp-wrapper \
+	 --disable-dependency-tracking \
+	--disable-amqp \
+	--disable-tcp-wrapper \
 	--disable-glibtest \
+	--disable-mongodb \
+	--disable-java \
+	--disable-json \
+	--disable-python \
 	--disable-spoof-source \
 	--disable-sql \
-	--enable-pcre \
 	--disable-linux-caps \
+	--disable-smtp \
+	--disable-redis \
+	--enable-pcre \
 
 TARGET_CPPFLAGS += \
 	-I$(STAGING_DIR)/usr/include/eventlog
